@@ -22,12 +22,21 @@ std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter; // Windorks su
 
 int main(int argc, char** argv) {
     
-    std::wstring print_containing;
+    std::wstring object_search;
     if (argc > 1) {
-        print_containing.append(converter.from_bytes(argv[1]));
+        object_search.append(converter.from_bytes(argv[1]));
     }
     std::transform(
-        print_containing.begin(), print_containing.end(), print_containing.begin(),
+        object_search.begin(), object_search.end(), object_search.begin(),
+        [](auto c){ return std::tolower(c); }
+    );
+
+    std::wstring value_search;
+    if (argc > 2) {
+        value_search.append(converter.from_bytes(argv[2]));
+    }
+    std::transform(
+        value_search.begin(), value_search.end(), value_search.begin(),
         [](auto c){ return std::tolower(c); }
     );
 
@@ -64,7 +73,7 @@ int main(int argc, char** argv) {
             );
             last_i = i+1;
 
-            if (lower_object_name.find(print_containing) == lower_object_name.npos) {
+            if (lower_object_name.find(object_search) == lower_object_name.npos) {
                 continue; // search string is NOT in parameter
             }
 
@@ -99,7 +108,15 @@ int main(int argc, char** argv) {
             for (int counter=0; counter < (int)pcchCounterListLength; counter+=1) {
                 if (pcchCounterList[counter] == '\0') {
                     std::wstring counter_name( pcchCounterList.substr(last_counter, counter-last_counter) );
+                    std::wstring lower_counter_name( pcchCounterList.substr(last_counter, counter-last_counter) );
+                    std::transform(
+                        lower_counter_name.begin(), lower_counter_name.end(), lower_counter_name.begin(),
+                        [](auto c){ return std::tolower(c); }
+                    );
                     last_counter = counter+1;
+                    if (lower_counter_name.find(value_search) == lower_counter_name.npos) {
+                        continue;
+                    }
                     if (counter_name.length() > 0) {
                         std::wcout << "c> " << counter_name << std::endl;
                     }
@@ -109,7 +126,15 @@ int main(int argc, char** argv) {
             for (int instance=0; instance < (int)pcchInstanceListLength; instance+=1) {
                 if (pcchInstanceList[instance] == '\0') {
                     std::wstring instance_name( pcchInstanceList.substr(last_instance, instance-last_instance) );
+                    std::wstring lower_instance_name( pcchInstanceList.substr(last_instance, instance-last_instance) );
+                    std::transform(
+                        lower_instance_name.begin(), lower_instance_name.end(), lower_instance_name.begin(),
+                        [](auto c){ return std::tolower(c); }
+                    );
                     last_instance = instance+1;
+                    if (lower_instance_name.find(value_search) == lower_instance_name.npos) {
+                        continue;
+                    }
                     if (instance_name.length() > 0) {
                         std::wcout << "i> " << instance_name << std::endl;
                     }
