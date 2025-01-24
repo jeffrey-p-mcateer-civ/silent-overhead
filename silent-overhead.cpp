@@ -6,6 +6,8 @@
 #include <locale>
 #include <codecvt>
 #include <string>
+#include <algorithm>
+#include <cctype>
 
 // Windows
 #pragma warning(push, 0)
@@ -24,6 +26,10 @@ int main(int argc, char** argv) {
     if (argc > 1) {
         print_containing.append(converter.from_bytes(argv[1]));
     }
+    std::transform(
+        print_containing.begin(), print_containing.end(), print_containing.begin(),
+        [](auto c){ return std::tolower(c); }
+    );
 
     /*
     CPdhQuery pdhQuery(
@@ -51,9 +57,14 @@ int main(int argc, char** argv) {
     for (int i=0; i<(int)objectsLength; i+=1) {
         if (namebuf[i] == '\0') {
             std::wstring object_name( namebuf.substr(last_i, i-last_i) );
+            std::wstring lower_object_name( namebuf.substr(last_i, i-last_i) );
+            std::transform(
+                lower_object_name.begin(), lower_object_name.end(), lower_object_name.begin(),
+                [](auto c){ return std::tolower(c); }
+            );
             last_i = i+1;
 
-            if (object_name.find(print_containing) == object_name.npos) {
+            if (lower_object_name.find(print_containing) == lower_object_name.npos) {
                 continue; // search string is NOT in parameter
             }
 
