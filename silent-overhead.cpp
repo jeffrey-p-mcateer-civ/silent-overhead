@@ -128,6 +128,9 @@ int main(int argc, char** argv) {
                         counter_q_ss << "\\" << object_name << "\\" << counter_name;
                         std::wstring counter_q(counter_q_ss.str());
 
+                        std::wcout << counter_q << std::endl;
+
+                        /*
                         if (pdhQuery != nullptr) {
                             delete pdhQuery;
                         }
@@ -141,7 +144,7 @@ int main(int argc, char** argv) {
                             Sleep(250);
                             DumpMap(pdhQuery->CollectQueryData());
                         }
-
+                        */
                     }
                 }
             }
