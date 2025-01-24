@@ -1,5 +1,11 @@
-/// Std lib
+
+#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+
+// Std lib
 #include <iostream>
+#include <locale>
+#include <codecvt>
+#include <string>
 
 // Windows
 #pragma warning(push, 0)
@@ -10,9 +16,15 @@
 // Repo code
 #include "CPdhQuery.hpp"
 
+std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter; // Windorks sux -_-
+
 int main(int argc, char** argv) {
-    std::cout << "Hello " << argc << " args!" << std::endl;
     
+    std::wstring print_containing;
+    if (argc > 1) {
+        print_containing.append(converter.from_bytes(argv[1]));
+    }
+
     /*
     CPdhQuery pdhQuery(
         std::tstring(_T("\\Processor(_Total)\\Interrupts/sec"))
@@ -36,11 +48,17 @@ int main(int argc, char** argv) {
 
     //std::wcout << "namebuf: " << namebuf << std::endl;
     int last_i=0;
-    for (int i=0; i<objectsLength; i+=1) {
+    for (int i=0; i<(int)objectsLength; i+=1) {
         if (namebuf[i] == '\0') {
             std::wstring object_name( namebuf.substr(last_i, i-last_i) );
-            std::wcout << object_name << std::endl;
             last_i = i+1;
+
+            if (object_name.find(print_containing) == object_name.npos) {
+                continue; // search string is NOT in parameter
+            }
+
+            std::wcout << object_name << std::endl;
+            
             DWORD pcchCounterListLength = 0;
             DWORD pcchInstanceListLength = 0;
             status = PdhEnumObjectItemsW(
@@ -67,19 +85,23 @@ int main(int argc, char** argv) {
             );
 
             int last_counter = 0;
-            for (int counter=0; counter < pcchCounterListLength; counter+=1) {
+            for (int counter=0; counter < (int)pcchCounterListLength; counter+=1) {
                 if (pcchCounterList[counter] == '\0') {
                     std::wstring counter_name( pcchCounterList.substr(last_counter, counter-last_counter) );
-                    std::wcout << "c> " << counter_name << std::endl;
                     last_counter = counter+1;
+                    if (counter_name.length() > 0) {
+                        std::wcout << "c> " << counter_name << std::endl;
+                    }
                 }
             }
             int last_instance = 0;
-            for (int instance=0; instance < pcchInstanceListLength; instance+=1) {
+            for (int instance=0; instance < (int)pcchInstanceListLength; instance+=1) {
                 if (pcchInstanceList[instance] == '\0') {
                     std::wstring instance_name( pcchInstanceList.substr(last_instance, instance-last_instance) );
-                    std::wcout << "i> " << instance_name << std::endl;
                     last_instance = instance+1;
+                    if (instance_name.length() > 0) {
+                        std::wcout << "i> " << instance_name << std::endl;
+                    }
                 }
             }
 

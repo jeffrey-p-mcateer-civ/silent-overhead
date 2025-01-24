@@ -18,7 +18,7 @@ try:
         output_dir=os.path.abspath(os.path.dirname(__file__)),
         include_dirs=['.'],
         extra_preargs=[
-            '/std:c++17',
+            '/std:c++20',
             # '/Wall', '/WX',
             '/EHsc', '-Zi',
         ],
