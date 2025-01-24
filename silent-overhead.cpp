@@ -33,7 +33,14 @@ int main(int argc, char** argv) {
     PDH_STATUS status = PdhEnumObjectsW(nullptr, nullptr, &namebuf[0], &bufLength, detailLevel, FALSE);
     //std::cout << ManageApp::getPdhStatusMsg(status);
 
-    std::wcout << "namebuf: " << namebuf << std::endl;
+    //std::wcout << "namebuf: " << namebuf << std::endl;
+    int last_i=0;
+    for (int i=0; i<bufLength; i+=1) {
+        if (namebuf[i] == '\0') {
+            std::wcout << namebuf.substr(last_i, i-last_i) << std::endl;
+            last_i = i+1;
+        }
+    }
 
     /*
     for (int i=0; i<(int)mszObjectList_len; i+=1) {
