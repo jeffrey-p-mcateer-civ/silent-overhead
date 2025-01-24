@@ -8,6 +8,7 @@
 #include <string>
 #include <algorithm>
 #include <cctype>
+#include <sstream>
 
 // Windows
 #pragma warning(push, 0)
@@ -62,6 +63,9 @@ int main(int argc, char** argv) {
     //std::cout << ManageApp::getPdhStatusMsg(status);
 
     //std::wcout << "namebuf: " << namebuf << std::endl;
+
+    CPdhQuery* pdhQuery;
+
     int last_i=0;
     for (int i=0; i<(int)objectsLength; i+=1) {
         if (namebuf[i] == '\0') {
@@ -73,7 +77,7 @@ int main(int argc, char** argv) {
             );
             last_i = i+1;
 
-            if (lower_object_name.find(object_search) == lower_object_name.npos) {
+            if (object_search.length() > 1 && lower_object_name.find(object_search) == lower_object_name.npos) {
                 continue; // search string is NOT in parameter
             }
 
@@ -114,11 +118,30 @@ int main(int argc, char** argv) {
                         [](auto c){ return std::tolower(c); }
                     );
                     last_counter = counter+1;
-                    if (lower_counter_name.find(value_search) == lower_counter_name.npos) {
+                    if (value_search.length() > 0 && lower_counter_name.find(value_search) == lower_counter_name.npos) {
                         continue;
                     }
                     if (counter_name.length() > 0) {
                         std::wcout << "c> " << counter_name << std::endl;
+
+                        std::wstringstream counter_q_ss;
+                        counter_q_ss << "\\" << object_name << "\\" << counter_name;
+                        std::wstring counter_q(counter_q_ss.str());
+
+                        if (pdhQuery != nullptr) {
+                            delete pdhQuery;
+                        }
+
+                        pdhQuery = new CPdhQuery(
+                            std::tstring( reinterpret_cast<TCHAR*>(counter_q.data()) )
+                        );
+                        
+                        for(int x=0; x<4; x+=1)
+                        {
+                            Sleep(250);
+                            DumpMap(pdhQuery->CollectQueryData());
+                        }
+
                     }
                 }
             }
@@ -132,7 +155,7 @@ int main(int argc, char** argv) {
                         [](auto c){ return std::tolower(c); }
                     );
                     last_instance = instance+1;
-                    if (lower_instance_name.find(value_search) == lower_instance_name.npos) {
+                    if (value_search.length() > 0 && lower_instance_name.find(value_search) == lower_instance_name.npos) {
                         continue;
                     }
                     if (instance_name.length() > 0) {
