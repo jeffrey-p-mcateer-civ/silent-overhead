@@ -9,7 +9,12 @@ import distutils
 import distutils.ccompiler
 
 try:
+    repo_dir = os.path.abspath(os.path.dirname(__file__))
+    print(f'repo_dir={repo_dir}')
     print(f'Compiler in use: {distutils.ccompiler.get_default_compiler()}')
+
+    if os.path.exists(repo_dir) and os.path.isdir(repo_dir):
+        os.chdir(repo_dir)
 
     cc = distutils.ccompiler.new_compiler()
 
