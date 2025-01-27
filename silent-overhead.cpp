@@ -41,17 +41,16 @@ int main(int argc, char** argv) {
         [](auto c){ return std::tolower(c); }
     );
 
-    /*
-    CPdhQuery pdhQuery(
+    
+    CPdhQuery pdhQuery1(
         std::tstring(_T("\\Processor(_Total)\\Interrupts/sec"))
     );
-    for(int i=0; i<50; ++i)
+    for(int i=0; i<4; ++i)
     {
         Sleep(500);
-        DumpMap(pdhQuery.CollectQueryData());
+        DumpMap(pdhQuery1.CollectQueryData());
     }
-    */
-
+    
     DWORD objectsLength = 0;
     const DWORD detailLevel = PERF_DETAIL_WIZARD;
     PDH_STATUS status;
@@ -130,21 +129,25 @@ int main(int argc, char** argv) {
 
                         std::wcout << counter_q << std::endl;
 
-                        /*
+                        
                         if (pdhQuery != nullptr) {
                             delete pdhQuery;
                         }
 
                         pdhQuery = new CPdhQuery(
-                            std::tstring( reinterpret_cast<TCHAR*>(counter_q.data()) )
+                            //std::tstring( reinterpret_cast<TCHAR*>(counter_q.data()) )
+                            std::tstring( _T("\\Processor(_Total)\\Interrupts/sec") )
                         );
                         
-                        for(int x=0; x<4; x+=1)
+                        for(int x=0; x<5; x+=1)
                         {
-                            Sleep(250);
-                            DumpMap(pdhQuery->CollectQueryData());
+                            Sleep(100);
+                            //std::cout << "Before pdhQuery->CollectQueryData()" << std::endl;
+                            auto data = pdhQuery->CollectQueryData();
+                            //std::cout << "Before DumpMap(data)" << std::endl;
+                            DumpMap(data);
                         }
-                        */
+                        
                     }
                 }
             }
